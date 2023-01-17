@@ -4,10 +4,22 @@
 
 body {
   margin: 0;
+  color: #1c1c1c;
 }
 
 p {
   margin: 0;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  /* max-width: 100%; */
+  height: auto;
+}
+
+a {
+  text-decoration: none;
 }
 
 .form-container {
@@ -43,11 +55,14 @@ p {
 }
 
 .photo-card {
-  flex-basis: calc((100% - 30px) / 4);
   border-radius: 4px;
   overflow: hidden;
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.12), 0px 1px 1px rgba(0, 0, 0, 0.14),
     0px 2px 1px rgba(0, 0, 0, 0.2);
+}
+
+.photo-link {
+  flex-basis: calc((100% - 30px) / 4);
 }
 
 .card-image {
@@ -61,15 +76,16 @@ p {
   display: flex;
   padding: 10px;
   gap: 10px;
+  justify-content: space-around;
 }
 
 .info-item {
-  /* flex-basis: calc((100% - 20px) / 4); */
   text-align: center;
+  color: #1c1c1c;
 }
 
-.info-item:last-child {
-  flex-grow: 2;
+.info-item > b {
+  display: block;
 }
 
 .load-more {
