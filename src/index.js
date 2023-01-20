@@ -7,7 +7,7 @@ const formEl = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
 const loadMoreBtn = document.querySelector('.load-more');
 loadMoreBtn.classList.add('is-hidden');
-// console.log(formEl);
+console.log(formEl);
 let page = 1;
 let picturesAmount = 0;
 
@@ -24,19 +24,6 @@ const lightbox = new SimpleLightbox('.gallery a', {
   captionDelay: 250,
 });
 
-// const { height: cardHeight } = document
-//   .querySelector('.gallery')
-//   .firstElementChild.getBoundingClientRect();
-
-// const something = gallery.getBoundingClientRect();
-
-// console.log(something.height);
-
-// window.scrollBy({
-//   top: something.height * 2,
-//   behavior: 'smooth',
-// });
-
 ////// Promise syntax /////
 // function renderPictures(e) {
 //   e.preventDefault();
@@ -51,10 +38,8 @@ const lightbox = new SimpleLightbox('.gallery a', {
 async function renderPictures(e) {
   try {
     e.preventDefault();
-    // console.log(formEl.elements[0].value);
     const pictures = await fetchPictures(formEl.elements[0].value, page);
     createInterfaceAfterFirstQuery(pictures);
-    // console.log(pictures);
   } catch (error) {
     console.log(error);
   }
@@ -62,9 +47,7 @@ async function renderPictures(e) {
 
 function createInterfaceAfterFirstQuery(data) {
   gallery.innerHTML = '';
-  // console.log('pictures amount:', data.data.hits.length);
   picturesAmount = data.data.hits.length;
-  // console.log('this is variable', picturesAmount);
 
   if (data.data.hits.length !== 0) {
     gallery.innerHTML = '';
@@ -126,6 +109,7 @@ async function loadMorePictures() {
     const markup = createMarkup(pictures);
     // console.log('this is pictures', pictures.data.hits.length);
     gallery.insertAdjacentHTML('beforeend', markup);
+
     // console.log(page);
     picturesAmount += pictures.data.hits.length;
     getNotification(picturesAmount);
@@ -139,3 +123,17 @@ async function loadMorePictures() {
 function getNotification(number) {
   Notify.info(`Hooray! We found ${number} images.`);
 }
+
+window.addEventListener('scroll', () => {
+  // const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+  // if (scrollTop + clientHeight >= scrollHeight) {
+  //   loadMorePictures();
+  // }
+
+  if (
+    window.innerHeight + window.pageYOffset >=
+    document.body.offsetHeight - 100
+  ) {
+    loadMorePictures();
+  }
+});
