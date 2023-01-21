@@ -121,7 +121,7 @@ async function loadMorePictures() {
     picturesAmount += pictures.data.hits.length;
     if (picturesAmount <= pictures.data.totalHits) {
       // console.log(page);
-      // const markup = createMarkup(pictures);
+      const markup = createMarkup(pictures);
       gallery.insertAdjacentHTML('beforeend', markup);
       // console.log(picturesAmount);
       // console.log(pictures.data.totalHits);
