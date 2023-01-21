@@ -5,11 +5,15 @@ const BASE_URL = 'https://pixabay.com/api/';
 
 ///////// http request using async/await syntax ///////////
 async function fetchPictures(query, page) {
-  const pictures = await axios.get(
-    `${BASE_URL}?key=${API_KEY}&q=${query}&image_type=photo&orientation=horizontal&safesearch=true&page=${page}&per_page=40`
-  );
-  console.log(pictures);
-  return pictures;
+  try {
+    const pictures = await axios.get(
+      `${BASE_URL}?key=${API_KEY}&q=${query}&image_type=photo&orientation=horizontal&safesearch=true&page=${page}&per_page=40`
+    );
+    console.log(pictures);
+    return pictures;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 ////////// http request using Promises ///////////
