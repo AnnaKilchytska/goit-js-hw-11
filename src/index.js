@@ -38,11 +38,14 @@ const lightbox = new SimpleLightbox('.gallery a', {
 async function renderPictures(e) {
   try {
     e.preventDefault();
-    page = 1;
-    const pictures = await fetchPictures(formEl.elements[0].value, page);
-    createInterfaceAfterFirstQuery(pictures);
-    getNotification(pictures.data.totalHits);
-    page += 1;
+    const query = formEl.elements[0].value.trim();
+    if (query !== '' && query !== ' ') {
+      page = 1;
+      const pictures = await fetchPictures(query, page);
+      createInterfaceAfterFirstQuery(pictures);
+      getNotification(pictures.data.totalHits);
+      page += 1;
+    }
   } catch (error) {
     console.log(error);
   }
@@ -119,26 +122,29 @@ async function loadMorePictures() {
   try {
     const pictures = await fetchPictures(formEl.elements[0].value, page);
     picturesAmount += pictures.data.hits.length;
-    if (picturesAmount <= pictures.data.totalHits) {
-      // console.log(page);
-      const markup = createMarkup(pictures);
-      gallery.insertAdjacentHTML('beforeend', markup);
-      // console.log(picturesAmount);
-      // console.log(pictures.data.totalHits);
-      page += 1;
-      // console.log(page);
-      lightbox.refresh();
+    // console.log(page);
+    const markup = createMarkup(pictures);
+    gallery.insertAdjacentHTML('beforeend', markup);
+    // console.log(picturesAmount);
+    // console.log(pictures.data.totalHits);
+    page += 1;
+    // console.log(page);
+    lightbox.refresh();
 
-      ////// smooth scrolling ///////
-      // const { height: cardHeight } = document
-      //   .querySelector('.gallery')
-      //   .firstElementChild.getBoundingClientRect();
+    //// smooth scrolling ///////
+    const { height: cardHeight } = document
+      .querySelector('.gallery')
+      .firstElementChild.getBoundingClientRect();
 
-      // window.scrollBy({
-      //   top: cardHeight * 2,
-      //   behavior: 'smooth',
-      // });
-    } else {
+    window.scrollBy({
+      top: cardHeight * 2,
+      behavior: 'smooth',
+    });
+
+    if (
+      pictures.data.hits.length < 40 ||
+      picturesAmount >= pictures.data.totalHits
+    ) {
       loadMoreBtn.classList.add('is-hidden');
       throw new Error();
     }
@@ -154,16 +160,21 @@ function getNotification(number) {
   Notify.info(`Hooray! We found ${number} images.`);
 }
 
-window.addEventListener('scroll', () => {
-  // const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
-  // if (scrollTop + clientHeight >= scrollHeight) {
-  //   loadMorePictures();
-  // }
+// window.addEventListener('scroll', () => {
+//   // const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+//   // if (scrollTop + clientHeight >= scrollHeight) {
+//   //   loadMorePictures();
+//   // }
 
-  if (
-    window.innerHeight + window.pageYOffset >=
-    document.body.offsetHeight - 100
-  ) {
-    loadMorePictures();
-  }
-});
+//   if (
+//     window.innerHeight + window.pageYOffset >
+//     document.body.offsetHeight - 100
+//   ) {
+//     console.log('Scroll!');
+//     console.log(window.innerHeight);
+//     console.log(window.pageYOffset);
+//     console.log(document.body.offsetHeight - 100);
+
+//     loadMorePictures();
+//   }
+// });
