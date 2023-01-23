@@ -43,7 +43,7 @@ async function renderPictures(e) {
       page = 1;
       const pictures = await fetchPictures(query, page);
       createInterfaceAfterFirstQuery(pictures);
-      getNotification(pictures.data.totalHits);
+
       page += 1;
     }
   } catch (error) {
@@ -63,6 +63,7 @@ function createInterfaceAfterFirstQuery(data) {
     gallery.insertAdjacentHTML('beforeend', markup);
     loadMoreBtn.classList.remove('is-hidden');
     // console.log(page);
+    getNotification(data.data.totalHits);
     lightbox.refresh();
 
     if (picturesAmount < 40) {
@@ -75,6 +76,7 @@ function createInterfaceAfterFirstQuery(data) {
     Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
+    loadMoreBtn.classList.add('is-hidden');
   }
 }
 
