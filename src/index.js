@@ -9,6 +9,7 @@ const loadMoreBtn = document.querySelector('.load-more');
 loadMoreBtn.classList.add('is-hidden');
 let page = 1;
 let picturesAmount = 0;
+let totalPages = 0;
 
 formEl.addEventListener('submit', renderPictures);
 loadMoreBtn.addEventListener('click', loadMorePictures);
@@ -23,6 +24,32 @@ const lightbox = new SimpleLightbox('.gallery a', {
   captionDelay: 250,
   download: 'click here to download',
 });
+
+const options = {
+  root: null,
+  rootMargin: '100px',
+  threshold: 1.0,
+};
+let callback = (entries, observer) => {
+  entries.forEach(async entry => {
+    if (entry.isIntersecting) {
+      observer.unobserve(entry.target);
+      page += 1;
+
+      const pictures = await fetchPictures(formEl.elements[0].value, page);
+
+      const markup = createMarkup(pictures);
+      gallery.insertAdjacentHTML('beforeend', markup);
+
+      if (page < totalPages) {
+        const item = document.querySelector('.photo-link:last-child');
+        observer.observe(item);
+        lightbox.refresh();
+      }
+    }
+  });
+};
+let observer = new IntersectionObserver(callback, options);
 
 ////// Promise syntax /////
 // function renderPictures(e) {
@@ -61,7 +88,14 @@ function createInterfaceAfterFirstQuery(data) {
     gallery.innerHTML = '';
     const markup = createMarkup(data);
     gallery.insertAdjacentHTML('beforeend', markup);
-    loadMoreBtn.classList.remove('is-hidden');
+    // loadMoreBtn.classList.remove('is-hidden');
+
+    totalPages = Math.ceil(data.data.total / 40);
+    if (page < totalPages) {
+      const item = document.querySelector('.photo-link:last-child');
+
+      observer.observe(item);
+    }
     // console.log(page);
     getNotification(data.data.totalHits);
     lightbox.refresh();
@@ -162,6 +196,7 @@ function getNotification(number) {
   Notify.info(`Hooray! We found ${number} images.`);
 }
 
+// так делать не надо //////
 // window.addEventListener('scroll', () => {
 //   // const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
 //   // if (scrollTop + clientHeight >= scrollHeight) {
